@@ -1,0 +1,4 @@
+# Only the site/ folder is published. Tests, database scripts, and docs stay private in the repo.
+[build]
+  publish = "site"
+  command = ""
