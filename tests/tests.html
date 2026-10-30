@@ -102,6 +102,13 @@ if(!PW)check("Open this page from your site's #checks to scan your real sets",tr
 else{var me=PW.SH_ST&&PW.SH_ST(),LL=PW.SH_lintAll(),ns=(PW.CS||[]).length;
 check("Scanned "+ns+" set"+(ns==1?"":"s")+(me&&me.n?" in "+me.n+"'s library":"")+(me&&me.t?"":" (log in as the teacher to see your own library)"),true);
 LL.forEach(function(x){check(x.set+": "+x.msg,false,"Double-check this in the set editor. If it's actually right, you can ignore it.")})}
+suite("Themes");
+var THM=w.TH,KS=["bg","g","fg","card","mut","acc","ok","bad","bd","btn"];check("Theme list is available",!!THM);
+if(THM){var names=Object.keys(THM);check("There is an Auto theme plus at least 4 others",names[0]=="Auto"&&names.length>=5,names.join(", "));
+names.forEach(function(n){check("“"+n+"” has a plain-text name (no emoji)",!/[\u{1F300}-\u{1FAFF}☀-➿]/u.test(n));if(THM[n])check("“"+n+"” sets every color",KS.every(function(k){return!!THM[n][k]}),KS.filter(function(k){return!THM[n][k]}).join(", "))});
+try{var r0=w.document.documentElement.style;w.theme(names[1]);check("Picking a theme changes the colors",r0.getPropertyValue("--btn")===THM[names[1]].btn);w.theme("Auto");check("Auto goes back to the default colors",!r0.getPropertyValue("--btn"));
+check("The theme menu shows every theme",w.document.querySelectorAll("#themes .chip").length===names.length)}catch(e){check("Switching themes works",false,e.message)}
+try{w.localStorage.setItem("pth","🌿 Mint");check("An old saved theme that no longer exists falls back safely",THM["🌿 Mint"]===undefined)}catch(e){}}
 suite("Private checks page");
 check("Checks page is built into the site",/<!--CHECKS-->/.test(w.document.documentElement.innerHTML));
 check("Visitors don't see it unless they go to #checks",!w.document.getElementById("chk"));
