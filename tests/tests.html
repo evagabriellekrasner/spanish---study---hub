@@ -96,12 +96,18 @@ check("Catches an empty set",has(LT([{name:"e",items:[]}]),/empty/));
 check("Catches a picture with no image",has(LT([{name:"p",type:"pic",items:[["el gato",""]]}]),/no picture/))}
 try{var oS=w.SH_ST;w.SH_ST=function(){return{n:"t",p:"x",t:1}};w.SH_T=function(){return true};w.CS.push({name:"zz-lint",items:[["el gato","the cat"],["el gato","cat"]]});w.saveS();w.CS.pop();w.saveS();w.SH_ST=oS;
 check("Teachers never get a checker pop-up when saving (it only runs on #checks)",!w.document.getElementById("lok"))}catch(e){check("Saving a set works",false,e.message)}
+function scanRows(sets,probs){var bad={},o=[];(probs||[]).forEach(function(x){bad[x.set]=1;o.push([x.set+": "+x.msg,false])});(sets||[]).forEach(function(c){if(!c)return;var nm=c.name||"Untitled set";if(!bad[nm])o.push([nm+": looks good",true])});return o}
+suite("Library scan lists every set");
+var sr=scanRows([{name:"Imperfect vocab"},{name:"Brand new set"},{name:"Bad set"}],[{set:"Bad set",msg:"duplicate"}]);
+check("A new set with no problems shows up by name",sr.some(function(r){return r[0]=="Brand new set: looks good"&&r[1]}),JSON.stringify(sr));
+check("A set with a problem shows the problem instead",sr.some(function(r){return r[0]=="Bad set: duplicate"&&!r[1]})&&!sr.some(function(r){return r[0]=="Bad set: looks good"}));
+check("Every set gets exactly one line when it's clean",sr.length===3,sr.length);
 var PW=null;try{if(window.parent!==window&&window.parent.SH_lintAll)PW=window.parent}catch(e){}
 suite("Your library: every set you've made (re-scanned each time)");
 if(!PW)check("Open this page from your site's #checks to scan your real sets",true);
 else{var me=PW.SH_ST&&PW.SH_ST(),LL=PW.SH_lintAll(),ns=(PW.CS||[]).length;
 check("Scanned "+ns+" set"+(ns==1?"":"s")+(me&&me.n?" in "+me.n+"'s library":"")+(me&&me.t?"":" (log in as the teacher to see your own library)"),true);
-LL.forEach(function(x){check(x.set+": "+x.msg,false,"Double-check this in the set editor. If it's actually right, you can ignore it.")})}
+scanRows(PW.CS,LL).forEach(function(r){check(r[0],r[1],r[1]?"":"Double-check this in the set editor. If it's actually right, you can ignore it.")})}
 suite("Themes");
 var THM=w.TH,KS=["bg","g","fg","card","mut","acc","ok","bad","bd","btn"];check("Theme list is available",!!THM);
 if(THM){var names=Object.keys(THM);check("There is a Default theme plus at least 4 others",names[0]=="Default"&&names.length>=5,names.join(", "));
