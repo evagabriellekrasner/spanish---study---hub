@@ -109,7 +109,7 @@ names.forEach(function(n){check("“"+n+"” has a plain-text name (no emoji)",!
 try{var r0=w.document.documentElement.style;w.theme(names[1]);check("Picking a theme changes the colors",r0.getPropertyValue("--btn")===THM[names[1]].btn);w.theme("Default");check("Default goes back to the default colors",!r0.getPropertyValue("--btn"));if(THM.Butter){w.theme("Butter");check("Light themes can use dark button text so buttons stay readable (Butter)",r0.getPropertyValue("--btxt")===THM.Butter.btxt);w.theme("Sage");check("Switching away from Butter resets the button text color",!r0.getPropertyValue("--btxt"));w.theme("Default")}
 check("The theme menu shows every theme",w.document.querySelectorAll("#themes .chip").length===names.length)}catch(e){check("Switching themes works",false,e.message)}
 var cs0=w.getComputedStyle(w.document.documentElement);check("Default is the Ocean Slate look (slate-blue button, light gray-blue background)",/#3f78b5/i.test(cs0.getPropertyValue("--btn"))&&/#f3f6f9/i.test(cs0.getPropertyValue("--bg")),cs0.getPropertyValue("--btn")+" / "+cs0.getPropertyValue("--bg"));
-check("Classic keeps the original pink and purple as an option",!!THM.Classic&&/#ec4899/.test(THM.Classic.btn));
+check("Classic (old pink and purple) was removed",!THM.Classic);
 check("Calm Blue was removed",!THM["Calm Blue"]);
 w.localStorage.setItem("pth","Auto");check("Someone who had the old Auto saved lands on Default",THM.Auto===undefined);
 try{w.localStorage.setItem("pth","🌿 Mint");check("An old saved theme that no longer exists falls back safely",THM["🌿 Mint"]===undefined)}catch(e){}}
