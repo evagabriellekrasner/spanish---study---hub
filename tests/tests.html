@@ -106,7 +106,7 @@ suite("Themes");
 var THM=w.TH,KS=["bg","g","fg","card","mut","acc","ok","bad","bd","btn"];check("Theme list is available",!!THM);
 if(THM){var names=Object.keys(THM);check("There is an Auto theme plus at least 4 others",names[0]=="Auto"&&names.length>=5,names.join(", "));
 names.forEach(function(n){check("“"+n+"” has a plain-text name (no emoji)",!/[\u{1F300}-\u{1FAFF}☀-➿]/u.test(n));if(THM[n])check("“"+n+"” sets every color",KS.every(function(k){return!!THM[n][k]}),KS.filter(function(k){return!THM[n][k]}).join(", "))});
-try{var r0=w.document.documentElement.style;w.theme(names[1]);check("Picking a theme changes the colors",r0.getPropertyValue("--btn")===THM[names[1]].btn);w.theme("Auto");check("Auto goes back to the default colors",!r0.getPropertyValue("--btn"));
+try{var r0=w.document.documentElement.style;w.theme(names[1]);check("Picking a theme changes the colors",r0.getPropertyValue("--btn")===THM[names[1]].btn);w.theme("Auto");check("Auto goes back to the default colors",!r0.getPropertyValue("--btn"));if(THM.Butter){w.theme("Butter");check("Light themes can use dark button text so buttons stay readable (Butter)",r0.getPropertyValue("--btxt")===THM.Butter.btxt);w.theme("Sage");check("Switching away from Butter resets the button text color",!r0.getPropertyValue("--btxt"));w.theme("Auto")}
 check("The theme menu shows every theme",w.document.querySelectorAll("#themes .chip").length===names.length)}catch(e){check("Switching themes works",false,e.message)}
 try{w.localStorage.setItem("pth","🌿 Mint");check("An old saved theme that no longer exists falls back safely",THM["🌿 Mint"]===undefined)}catch(e){}}
 suite("Private checks page");
