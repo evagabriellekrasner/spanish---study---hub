@@ -119,6 +119,13 @@ check("Classic (old pink and purple) was removed",!THM.Classic);
 check("Calm Blue was removed",!THM["Calm Blue"]);
 w.localStorage.setItem("pth","Auto");check("Someone who had the old Auto saved lands on Default",THM.Auto===undefined);
 try{w.localStorage.setItem("pth","🌿 Mint");check("An old saved theme that no longer exists falls back safely",THM["🌿 Mint"]===undefined)}catch(e){}}
+suite("App icon (home screen and browser tab)");var icS=cur;
+var hd=w.document.head;function hl(r){var e=hd.querySelector('link[rel="'+r+'"]');return e&&e.getAttribute("href")}
+check("Tab icon uses the Ocean Slate blue, not the old pink and purple",/2f5d8f/i.test(hl("icon")||"")&&!/ec4899/i.test(hl("icon")||""));
+check("Apple home-screen icon is linked",hl("apple-touch-icon")=="apple-touch-icon.png");
+check("App manifest is linked (lets computers and phones install it with the icon)",hl("manifest")=="manifest.webmanifest");
+var ICW=fetch(BASE+"manifest.webmanifest").then(function(r){return r.json()}).then(function(m){var src=(m.icons||[]).map(function(i){return i.sizes});
+return Promise.all(["apple-touch-icon.png","icon-192.png","icon-512.png"].map(function(f){return new Promise(function(ok){var im=new Image();im.onload=function(){ok([f,im.naturalWidth])};im.onerror=function(){ok([f,0])};im.src=BASE+f})})).then(function(sz){return{m:m,src:src,sz:sz}})}).catch(function(e){return{err:String(e)}});
 suite("Private checks page");
 check("Checks page is built into the site",/<!--CHECKS-->/.test(w.document.documentElement.innerHTML));
 check("Visitors don't see it unless they go to #checks",!w.document.getElementById("chk"));
@@ -129,7 +136,9 @@ var c=w.document.querySelector("#sets [data-u]");c.click();check("A unit opens",
 var s=w.document.querySelector("#usets [data-s],#usets [data-b],#usets [data-i]");if(s){s.click();check("A set opens",!w.document.getElementById("cset")||!w.document.getElementById("cset").hidden)}
 w.view("hub")}catch(e){check("Navigation threw an error",false,e.message)}
 check("No errors while clicking around",w.__errs.length===n0,w.__errs.slice(n0).join(" | "));
-draw()}
+ICW.then(function(x){cur=icS;if(x.err)check("App manifest can be read",false,x.err);else{check("Manifest names the app Spanish Study Hub",x.m.name=="Spanish Study Hub"&&!!x.m.short_name,x.m.name);
+check("Manifest lists 192px and 512px icons",x.src.indexOf("192x192")>=0&&x.src.indexOf("512x512")>=0,x.src.join(", "));
+x.sz.forEach(function(r){check(r[0]+" loads at the right size",r[1]==({"apple-touch-icon.png":180,"icon-192.png":192,"icon-512.png":512})[r[0]],r[1]?r[1]+"px":"missing")})}draw()})}
 function go(){document.getElementById("st").textContent="Running…";document.getElementById("st").className="big";document.getElementById("out").innerHTML="";[].forEach.call(document.querySelectorAll("iframe"),function(f){f.remove()});
 load().then(run).catch(function(e){R=[];suite("Setup");check("Test page could start",false,e.message);draw()})}
 document.getElementById("re").onclick=go;go();
