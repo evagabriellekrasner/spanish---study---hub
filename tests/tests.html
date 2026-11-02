@@ -148,6 +148,12 @@ eq("Students are greeted by their animal, not the code",w.SH_hiName("pandaek1"),
 try{w.SH_setLbl("pandaem7","Maria");eq("Teachers can add a private name label",w.SH_dn("pandaem7"),"Maria (pandaem7)");
 check("The label is saved only on this device",/Maria/.test(w.localStorage.getItem("plbl")||""));
 w.SH_setLbl("pandaem7","");eq("Clearing the label shows just the username",w.SH_dn("pandaem7"),"pandaem7")}catch(e){check("Private name labels work",false,e.message)}
+suite("Deleting assignments");
+var sc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Each assignment has a Delete button",/data-adl="'\+a\.id\+'"/.test(sc));
+check("There's a button to delete all ended assignments",/data-adl="ended"/.test(sc));
+check("There's a button to clear all assignments",/data-adl="all"/.test(sc));
+check("Deleting always asks first",/data-adl[\s\S]{0,300}confirm\(/.test(sc));
 suite("Private checks page");
 check("Checks page is built into the site",/<!--CHECKS-->/.test(w.document.documentElement.innerHTML));
 check("Visitors don't see it unless they go to #checks",!w.document.getElementById("chk"));
