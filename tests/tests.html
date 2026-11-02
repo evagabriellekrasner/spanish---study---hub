@@ -126,6 +126,26 @@ check("Apple home-screen icon is linked",hl("apple-touch-icon")=="apple-touch-ic
 check("App manifest is linked (lets computers and phones install it with the icon)",hl("manifest")=="manifest.webmanifest");
 var ICW=fetch(BASE+"manifest.webmanifest").then(function(r){return r.json()}).then(function(m){var src=(m.icons||[]).map(function(i){return i.sizes});
 return Promise.all(["apple-touch-icon.png","icon-192.png","icon-512.png"].map(function(f){return new Promise(function(ok){var im=new Image();im.onload=function(){ok([f,im.naturalWidth])};im.onerror=function(){ok([f,0])};im.src=BASE+f})})).then(function(sz){return{m:m,src:src,sz:sz}})}).catch(function(e){return{err:String(e)}});
+suite("Animal usernames (no student names)");
+var AN=w.SH_ANI||{},AK=Object.keys(AN);check("There are at least 40 animals to pick from",AK.length>=40,AK.length);
+check("Every animal is a plain lowercase word with a picture",AK.every(function(k){return/^[a-z]+$/.test(k)&&!!AN[k]}),AK.filter(function(k){return!/^[a-z]+$/.test(k)}).join(", "));
+eq("Friendly message when the animal was just taken",w.SH_emsg({message:"animal taken"}),"Someone in your class just picked that animal. Pick another one.");
+eq("Friendly message when two classes would share initials + period",w.SH_emsg({message:"tag taken"}),"Another class already uses that. Add a middle initial, like EAM7.");
+eq("Friendly message when the teacher hasn't added initials yet",w.SH_emsg({message:"no tag"}),"Your teacher needs to add their initials and period to this class first.");
+try{w.SH_gShow();w.document.getElementById("gs1").click();
+check("Student sign-up has no name box",!w.document.getElementById("gn"));
+check("Student sign-up asks for the class code",!!w.document.getElementById("gcc"));
+w.document.getElementById("gg").click();check("Class code is required",/class code/i.test(w.document.getElementById("ge").textContent),w.document.getElementById("ge").textContent);
+w.SH_gA({code:"ABC123",tag:"em7",cls:"Period 7",taken:["panda"],pick:null});w.SH_gDraw();
+check("All the animals show up to pick from",w.document.querySelectorAll("[data-ani]").length===AK.length);
+check("Animals already taken in the class are grayed out",w.document.querySelector('[data-ani="panda"]').disabled&&!w.document.querySelector('[data-ani="otter"]').disabled);
+w.document.querySelector('[data-ani="otter"]').click();var un=w.document.querySelector(".anu b");eq("Picking an animal shows the username (animal + initials + period)",un&&un.textContent,"otterem7");
+w.document.getElementById("gg").click();check("A 4-digit PIN is still required",/PIN/.test(w.document.getElementById("ge").textContent));
+w.document.getElementById("gs0").click();var gl=w.document.querySelector('label[for="gn"]');check("Log in asks for a username",gl&&/Username/.test(gl.textContent));
+w.SH_gA(null);w.SH_gHide()}catch(e){check("Animal sign-up screen works",false,e.message)}
+try{w.SH_setLbl("pandaem7","Maria");eq("Teachers can add a private name label",w.SH_dn("pandaem7"),"Maria (pandaem7)");
+check("The label is saved only on this device",/Maria/.test(w.localStorage.getItem("plbl")||""));
+w.SH_setLbl("pandaem7","");eq("Clearing the label shows just the username",w.SH_dn("pandaem7"),"pandaem7")}catch(e){check("Private name labels work",false,e.message)}
 suite("Private checks page");
 check("Checks page is built into the site",/<!--CHECKS-->/.test(w.document.documentElement.innerHTML));
 check("Visitors don't see it unless they go to #checks",!w.document.getElementById("chk"));
