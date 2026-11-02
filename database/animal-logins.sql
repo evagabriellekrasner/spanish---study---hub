@@ -31,6 +31,10 @@ begin
     insert into classes (name, code, owner_id) values (nm, k, c[2]) returning id into r;
     return jsonb_build_object('id', r, 'code', k);
   elsif act = 'delete' then
+    -- animal usernames only make sense in their class, so those student accounts go with it
+    delete from students s where s.role = 'student'
+      and s.id in (select student_id from class_members where class_id = (select id from classes where id = cid and owner_id = c[2]))
+      and not exists (select 1 from class_members m where m.student_id = s.id and m.class_id <> cid);
     delete from classes where id = cid and owner_id = c[2];
   elsif act = 'remove' then
     delete from class_members where student_id = sid
@@ -61,7 +65,8 @@ begin
   if c.tag is null then raise exception 'no tag'; end if;
   return jsonb_build_object('tag', c.tag, 'class', c.name,
     'taken', coalesce((select jsonb_agg(a) from unnest(_animals()) a
-                       where exists (select 1 from students where lower(name) = a || lower(c.tag))), '[]'::jsonb));
+                       where exists (select 1 from students s join class_members m on m.student_id = s.id
+                                     where m.class_id = c.id and lower(s.name) = a || lower(c.tag))), '[]'::jsonb));
 end $$;
 
 -- Student sign-up with no name: the username is built from the animal and the class tag.
@@ -76,6 +81,11 @@ begin
   if not (animal = any(_animals())) then raise exception 'bad animal'; end if;
   if p !~ '^[0-9]{4}$' then raise exception 'bad pin'; end if;
   n := animal || lower(c.tag);
+  if exists (select 1 from students s join class_members m on m.student_id = s.id
+             where m.class_id = c.id and lower(s.name) = n) then raise exception 'animal taken'; end if;
+  -- an old account with this username that isn't in any class (its class was deleted) is cleared out
+  delete from students s where lower(s.name) = n and s.role = 'student'
+    and not exists (select 1 from class_members m where m.student_id = s.id);
   if exists (select 1 from students where lower(name) = n) then raise exception 'animal taken'; end if;
   insert into students (name, pin_hash) values (n, crypt(p, gen_salt('bf'))) returning id into r;
   insert into class_members (class_id, student_id) values (c.id, r);

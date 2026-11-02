@@ -150,6 +150,7 @@ check("The label is saved only on this device",/Maria/.test(w.localStorage.getIt
 w.SH_setLbl("pandaem7","");eq("Clearing the label shows just the username",w.SH_dn("pandaem7"),"pandaem7")}catch(e){check("Private name labels work",false,e.message)}
 suite("Deleting assignments");
 var sc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Deleting a class warns that its student accounts go too (so animals free up)",/Delete this class\?[^"]*animal accounts are deleted too/.test(sc));
 check("Each assignment has a Delete button",/data-adl="'\+a\.id\+'"/.test(sc));
 check("There's a button to delete all ended assignments",/data-adl="ended"/.test(sc));
 check("There's a button to clear all assignments",/data-adl="all"/.test(sc));
