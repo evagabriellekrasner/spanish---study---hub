@@ -144,6 +144,7 @@ w.document.querySelector('[data-ani="otter"]').click();var un=w.document.querySe
 w.document.getElementById("gg").click();check("A 4-digit PIN is still required",/PIN/.test(w.document.getElementById("ge").textContent));
 w.document.getElementById("gs0").click();var gl=w.document.querySelector('label[for="gn"]');check("Log in asks for a username",gl&&/Username/.test(gl.textContent));
 w.SH_gA(null);w.SH_gHide()}catch(e){check("Animal sign-up screen works",false,e.message)}
+eq("Students are greeted by their animal, not the code",w.SH_hiName("pandaek1"),"Panda 🐼");eq("Teachers are still greeted by name",w.SH_hiName("Teacher Test"),"Teacher Test");
 try{w.SH_setLbl("pandaem7","Maria");eq("Teachers can add a private name label",w.SH_dn("pandaem7"),"Maria (pandaem7)");
 check("The label is saved only on this device",/Maria/.test(w.localStorage.getItem("plbl")||""));
 w.SH_setLbl("pandaem7","");eq("Clearing the label shows just the username",w.SH_dn("pandaem7"),"pandaem7")}catch(e){check("Private name labels work",false,e.message)}
