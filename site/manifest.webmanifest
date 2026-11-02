@@ -1,6 +1,6 @@
 {
-  "name": "Spanish Study Hub",
-  "short_name": "Study Hub",
+  "name": "Spanish Study Site",
+  "short_name": "Spanish Study",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

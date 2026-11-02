@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Study Hub Tests</title>
+<title>Spanish Study Site Tests</title>
 <style>
 :root{--bg:#f7f7fb;--card:#fff;--fg:#1d1d2b;--sub:#6b6b80;--bd:#e3e3ee;--ok:#1f8a4c;--bad:#c0392b;--ac:#7c4dff}
 @media (prefers-color-scheme:dark){:root{--bg:#14141c;--card:#1d1d28;--fg:#ececf4;--sub:#a0a0b4;--bd:#2e2e3c;--ok:#4cc483;--bad:#ff6b5b}}
@@ -13,7 +13,7 @@ details{background:var(--card);border:1px solid var(--bd);border-radius:12px;mar
 .t{padding:6px 16px;border-top:1px solid var(--bd);font-size:.9rem;display:flex;gap:10px}.t .m{flex:1;min-width:0;overflow-wrap:anywhere}.t small{display:block;color:var(--sub)}
 iframe{position:absolute;left:-9999px;width:390px;height:844px;border:0}
 </style></head><body><main>
-<h1>Study Hub tests</h1><p class="sub">Checks the Spanish (every built-in verb in every tense), the sentence grammar, and the main features. Nothing here touches real data: the site runs in a sealed copy with no internet and its own blank storage.</p>
+<h1>Spanish Study Site tests</h1><p class="sub">Checks the Spanish (every built-in verb in every tense), the sentence grammar, and the main features. Nothing here touches real data: the site runs in a sealed copy with no internet and its own blank storage.</p>
 <div class="sum"><span class="big" id="st">Running…</span><span class="sub" id="cnt" style="margin:0"></span><span style="flex:1"></span><button id="re">Run again</button></div>
 <div id="out"></div></main>
 <script>
@@ -126,6 +126,9 @@ check("Apple home-screen icon is linked",hl("apple-touch-icon")=="apple-touch-ic
 check("App manifest is linked (lets computers and phones install it with the icon)",hl("manifest")=="manifest.webmanifest");
 var ICW=fetch(BASE+"manifest.webmanifest").then(function(r){return r.json()}).then(function(m){var src=(m.icons||[]).map(function(i){return i.sizes});
 return Promise.all(["apple-touch-icon.png","icon-192.png","icon-512.png"].map(function(f){return new Promise(function(ok){var im=new Image();im.onload=function(){ok([f,im.naturalWidth])};im.onerror=function(){ok([f,0])};im.src=BASE+f})})).then(function(sz){return{m:m,src:src,sz:sz}})}).catch(function(e){return{err:String(e)}});
+suite("Site name");
+check("The site is called Spanish Study Site (tab, header, welcome screen)",w.document.title=="Spanish Study Site"&&w.document.body.innerHTML.indexOf("Spanish Study Site")>=0);
+check("The old name Study Hub is gone from what visitors see",!/Study Hub/.test(w.document.title+" "+w.document.body.innerText));
 suite("Animal usernames (no student names)");
 try{var gx="";w.SH_gShow();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gs1").click();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gr1").click();gx+=w.document.getElementById("gate").innerHTML;w.SH_gHide();check("Sign-up and log-in screens show no example usernames or teacher names",!/pandaem7|em7|Martinez|Maria G/i.test(gx))}catch(e){check("Sign-up and log-in screens open",false,e.message)}
 var AN=w.SH_ANI||{},AK=Object.keys(AN);check("There are at least 40 animals to pick from",AK.length>=40,AK.length);
@@ -165,7 +168,7 @@ var c=w.document.querySelector("#sets [data-u]");c.click();check("A unit opens",
 var s=w.document.querySelector("#usets [data-s],#usets [data-b],#usets [data-i]");if(s){s.click();check("A set opens",!w.document.getElementById("cset")||!w.document.getElementById("cset").hidden)}
 w.view("hub")}catch(e){check("Navigation threw an error",false,e.message)}
 check("No errors while clicking around",w.__errs.length===n0,w.__errs.slice(n0).join(" | "));
-ICW.then(function(x){cur=icS;if(x.err)check("App manifest can be read",false,x.err);else{check("Manifest names the app Spanish Study Hub",x.m.name=="Spanish Study Hub"&&!!x.m.short_name,x.m.name);
+ICW.then(function(x){cur=icS;if(x.err)check("App manifest can be read",false,x.err);else{check("Manifest names the app Spanish Study Site",x.m.name=="Spanish Study Site"&&!!x.m.short_name,x.m.name);
 check("Manifest lists 192px and 512px icons",x.src.indexOf("192x192")>=0&&x.src.indexOf("512x512")>=0,x.src.join(", "));
 x.sz.forEach(function(r){check(r[0]+" loads at the right size",r[1]==({"apple-touch-icon.png":180,"icon-192.png":192,"icon-512.png":512})[r[0]],r[1]?r[1]+"px":"missing")})}draw()})}
 function go(){document.getElementById("st").textContent="Running…";document.getElementById("st").className="big";document.getElementById("out").innerHTML="";[].forEach.call(document.querySelectorAll("iframe"),function(f){f.remove()});
