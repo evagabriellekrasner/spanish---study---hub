@@ -127,10 +127,11 @@ check("App manifest is linked (lets computers and phones install it with the ico
 var ICW=fetch(BASE+"manifest.webmanifest").then(function(r){return r.json()}).then(function(m){var src=(m.icons||[]).map(function(i){return i.sizes});
 return Promise.all(["apple-touch-icon.png","icon-192.png","icon-512.png"].map(function(f){return new Promise(function(ok){var im=new Image();im.onload=function(){ok([f,im.naturalWidth])};im.onerror=function(){ok([f,0])};im.src=BASE+f})})).then(function(sz){return{m:m,src:src,sz:sz}})}).catch(function(e){return{err:String(e)}});
 suite("Animal usernames (no student names)");
+try{var gx="";w.SH_gShow();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gs1").click();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gr1").click();gx+=w.document.getElementById("gate").innerHTML;w.SH_gHide();check("Sign-up and log-in screens show no example usernames or teacher names",!/pandaem7|em7|Martinez|Maria G/i.test(gx))}catch(e){check("Sign-up and log-in screens open",false,e.message)}
 var AN=w.SH_ANI||{},AK=Object.keys(AN);check("There are at least 40 animals to pick from",AK.length>=40,AK.length);
 check("Every animal is a plain lowercase word with a picture",AK.every(function(k){return/^[a-z]+$/.test(k)&&!!AN[k]}),AK.filter(function(k){return!/^[a-z]+$/.test(k)}).join(", "));
 eq("Friendly message when the animal was just taken",w.SH_emsg({message:"animal taken"}),"Someone in your class just picked that animal. Pick another one.");
-eq("Friendly message when two classes would share initials + period",w.SH_emsg({message:"tag taken"}),"Another class already uses that. Add a middle initial, like EAM7.");
+eq("Friendly message when two classes would share initials + period",w.SH_emsg({message:"tag taken"}),"Another class already uses that. Add a middle initial, like ABC3.");
 eq("Friendly message when the teacher hasn't added initials yet",w.SH_emsg({message:"no tag"}),"Your teacher needs to add their initials and period to this class first.");
 try{w.SH_gShow();w.document.getElementById("gs1").click();
 check("Student sign-up has no name box",!w.document.getElementById("gn"));
