@@ -49,7 +49,7 @@
 | Database | Supabase (PostgreSQL) with row-level security and `security definer` functions. PINs are bcrypt-hashed. |
 | Tests | 950+ checks in `tests/tests.html`, run headlessly with Playwright and also available on a private `#checks` page |
 
-The old Netlify copy is frozen (`netlify.toml` skips all builds).
+The old Netlify copy has been deleted.
 
 ## Folders
 | Folder | What's in it |

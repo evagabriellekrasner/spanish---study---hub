@@ -19,7 +19,7 @@ Notes for Claude (and any developer) working in this repo. Read this before chan
 - **One file:** `site/index.html` holds all the HTML, CSS, and JavaScript, plus the built-in vocab sets and verb data (about 1.9 MB). There's no framework, no bundler, and no npm dependencies for the site.
 - **Code style:** ES5-style JavaScript (`var`, `function`, no arrow functions or classes in site code), with short helper names: `$(id)` gets an element, and `rp(fn, args)` calls a Supabase RPC. Match the surrounding style and keep it compact.
 - **Hosting:** GitHub Pages publishes only `site/` via `.github/workflows/pages.yml`. Every push to `main` goes live in about a minute. Check deploys with `gh run list -R spanishstudysite/spanishstudysite.github.io`.
-- **Old host:** `netlify.toml` has `ignore = "exit 0"`, so the old Netlify copy is frozen and skips every build. Leave it that way.
+- **Old host:** the old Netlify copy has been deleted. GitHub Pages is the only host.
 - **Database:** Supabase (PostgreSQL). The browser never reads tables directly. It only calls `security definer` SQL functions that check a student's username and PIN, or a teacher's login, first. PINs are bcrypt hashed (`crypt`/`gen_salt('bf')`).
 
 ## Folders
@@ -68,4 +68,4 @@ git push origin main            # goes live via GitHub Pages
 - `index.html` is huge. Search with `grep -n` and edit with exact, small replacements. Don't rewrite whole sections.
 - The `<!--CHECKS-->…<!--/CHECKS-->` block at the end of `index.html` is generated. Never hand-edit it. Rerun `build-checks.py` instead.
 - The `#gate` (login screen) must scroll on short screens. Keep content able to scroll instead of using a centered flex box that cuts off the top.
-- `database/close-name-signup.sql` hasn't been run yet. Run it only after everyone is on the new link, because it disables the old name sign-up.
+- `database/close-name-signup.sql` has been run, so the old "type your name" sign-up is off in the database. Never bring back `student_signup` with names.

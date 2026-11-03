@@ -107,7 +107,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
 - [x] Rename to Loro, with the new parrot logo
 - [ ] Confirm the new link loads on the school network
 - [ ] Change the teacher code before real students join
-- [ ] Run `database/close-name-signup.sql` once every teacher is on the new link
+- [x] Run `database/close-name-signup.sql` (done; the old Netlify copy is deleted)
 - [ ] Update the one-pager in `docs/` with the Loro name and new link
 
 ## 9. Ideas for later
