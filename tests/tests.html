@@ -183,15 +183,13 @@ check("Both new passwords have to match",/match/.test(w.document.getElementById(
 var tw=w.document.getElementById("tpw");tw.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));w.SH_tNewPw("Teacher Test","1234");
 check("The pick-a-password screen can't be clicked away or doubled up",!!w.document.getElementById("tpw")&&w.document.querySelectorAll("#tpw").length===1);
 check("The pick-a-password screen sits above other popups",+tw.style.zIndex>30);tw.remove()}catch(e){check("Pick-a-password screen works",false,e.message)}
-suite("Forgot your username");
-try{w.SH_gShow();w.document.getElementById("gs0").click();var fb=w.document.getElementById("gfu");check("The log-in screen has a Forgot your username link",!!fb);
-fb.click();check("It asks for the class code first",!!w.document.getElementById("fcc"));w.document.getElementById("fgo").click();check("The class code is required",/class code/i.test(w.document.getElementById("fe").textContent));
-w.SH_fUser({tag:"ek1",cls:"Period 1",taken:["panda","otter"],pick:null});
-eq("Only animals already used in the class show up",w.document.querySelectorAll("#fun [data-fa]").length,2);
-w.document.querySelector('#fun [data-fa="panda"]').click();var fu=w.document.querySelector("#fun .anu b");eq("Tapping your animal shows your username",fu&&fu.textContent,"pandaek1");
-check("No PIN is ever shown",!/\d{4}/.test(w.document.getElementById("fun").textContent.replace("ek1","")));
-w.document.getElementById("fx").click();check("Using it fills in the username on the log-in screen",!w.document.getElementById("fun")&&w.document.getElementById("gn").value==="pandaek1");
-w.document.getElementById("gn").value="";w.SH_gHide()}catch(e){check("Forgot-username screen works",false,e.message)}
+suite("Everyone logs in");
+try{w.SH_gShow();w.document.getElementById("gs0").click();var gh=w.document.getElementById("gate").innerHTML;
+check("There's no Forgot your username button (the teacher helps instead)",!w.document.getElementById("gfu")&&typeof w.SH_fUser=="undefined");
+check("There's no Continue without an account button",!w.document.getElementById("gk")&&!/without an account/i.test(gh));
+w.SH_gHide()}catch(e){check("Log-in screen opens",false,e.message)}
+var lsrc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Old guest sessions don't skip the log-in screen",!/pguest/.test(lsrc));
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
