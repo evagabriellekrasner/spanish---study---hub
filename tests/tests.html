@@ -179,7 +179,10 @@ try{w.SH_tNewPw("Teacher Test","1234");check("Teachers with an old PIN are asked
 w.document.getElementById("tnp").value="short1";w.document.getElementById("tnp2").value="short1";w.document.getElementById("tns").click();
 check("The new password has to be strong",/8 characters/.test(w.document.getElementById("tne").textContent));
 w.document.getElementById("tnp").value="loro2026";w.document.getElementById("tnp2").value="loro2027";w.document.getElementById("tns").click();
-check("Both new passwords have to match",/match/.test(w.document.getElementById("tne").textContent));w.document.getElementById("ov").hidden=true}catch(e){check("Pick-a-password screen works",false,e.message)}
+check("Both new passwords have to match",/match/.test(w.document.getElementById("tne").textContent));
+var tw=w.document.getElementById("tpw");tw.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));w.SH_tNewPw("Teacher Test","1234");
+check("The pick-a-password screen can't be clicked away or doubled up",!!w.document.getElementById("tpw")&&w.document.querySelectorAll("#tpw").length===1);
+check("The pick-a-password screen sits above other popups",+tw.style.zIndex>30);tw.remove()}catch(e){check("Pick-a-password screen works",false,e.message)}
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
@@ -187,6 +190,7 @@ eq("A link that tries to sneak in code is blocked",w.SH_isrc('x" onerror="alert(
 eq("javascript: links are blocked",w.SH_isrc("javascript:alert(1)"),"");
 check("Quotes in a link can't break out of the picture",w.SH_isrc('https://a.com/a.jpg"onerror="alert(1)').indexOf('"')<0)}catch(e){check("Picture link safety check works",false,e.message)}
 var ssrc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Teachers already logged in with an old PIN are asked when the page loads",/function pull\(\)[^\n]*tChk\(\)/.test(ssrc));
 check("Every picture on the site goes through the safety check",/src="'\+isrc\(/.test(ssrc)&&!/src="'\+(?!isrc\()/.test(ssrc));
 suite("Deleting assignments");
 var sc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
