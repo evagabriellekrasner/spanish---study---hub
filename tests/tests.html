@@ -212,7 +212,9 @@ var lsrc2=[].map.call(w.document.scripts,function(x){return x.textContent}).filt
 check("Verb practice cheers too",(lsrc2.match(/tries\+\+;loroAns\(ok\)/g)||[]).length===2);
 check("Loro stays up for a few seconds",/classList\.remove\("on"\)\},5500\)/.test(lsrc2));
 check("The assignment list has Loro counting assignments",/loroSay\(loroAsg\(nOpen\)\)/.test(lsrc2));
+suite("Launch safety");
 check("The site never uses the old name sign-up",!/rp\("student_signup"/.test(lsrc2));
+check("The keep-awake ping can find the database address and public key",/var SBU="https:\/\/[a-z0-9]+\.supabase\.co",KEY="[^"]+"/.test(lsrc2));
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");

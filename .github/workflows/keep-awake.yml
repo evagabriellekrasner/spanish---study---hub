@@ -1,0 +1,34 @@
+# Keeps the free Supabase database from pausing. Supabase pauses free projects after 7 days with no use
+# (for example over winter or summer break). Twice a week this asks the database a harmless question.
+# It reads no student data and changes nothing.
+# If the database is already paused or down, this run fails and GitHub emails you, so you know to
+# click "Resume project" in the Supabase dashboard.
+# You can also run it by hand: Actions tab > Keep database awake > Run workflow.
+name: Keep database awake
+on:
+  schedule:
+    - cron: "17 14 * * 1,4"   # Mondays and Thursdays, about 9 AM Chicago time
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping the database
+        run: |
+          # The address and the public key are already in the site, so read them from there.
+          SBU=$(grep -o 'var SBU="https://[a-z0-9]*\.supabase\.co"' site/index.html | head -1 | cut -d'"' -f2)
+          KEY=$(grep -o 'var SBU="[^"]*",KEY="[^"]*"' site/index.html | head -1 | cut -d'"' -f4)
+          if [ -z "$SBU" ] || [ -z "$KEY" ]; then echo "Couldn't find the database address in site/index.html"; exit 1; fi
+          # Look up a class code that doesn't exist. The database answers "bad code", which counts as use.
+          OUT=$(curl -s -m 60 -w '\n%{http_code}' -X POST "$SBU/rest/v1/rpc/class_animals" \
+            -H "apikey: $KEY" -H "Content-Type: application/json" \
+            -d '{"code":"PING00"}')
+          CODE=$(echo "$OUT" | tail -1)
+          echo "Database answered with status $CODE"
+          if [ "$CODE" = "200" ] || echo "$OUT" | grep -q "bad code"; then echo "Database is awake."; exit 0; fi
+          echo "$OUT"
+          echo "The database didn't answer normally. It may be paused: open the Supabase dashboard and click Resume project."
+          exit 1
