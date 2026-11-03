@@ -190,6 +190,24 @@ check("There's no Continue without an account button",!w.document.getElementById
 w.SH_gHide()}catch(e){check("Log-in screen opens",false,e.message)}
 var lsrc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
 check("Old guest sessions don't skip the log-in screen",!/pguest/.test(lsrc));
+suite("Loro the parrot");
+try{var L0=w.SH_LORO;check("Loro has lots of different cheers",L0.cheer.length>=8&&L0.streak.length>=4&&L0.oops.length>=3);
+var allL=L0.cheer.concat(L0.oops).join(" ");check("Cheers mix English and Spanish",/¡/.test(allL)&&/ you/i.test(allL));
+check("Loro counts one assignment",/1/.test(w.SH_loroAsg(1))&&/assignment|tarea/i.test(w.SH_loroAsg(1)));
+check("Loro counts several assignments",/3/.test(w.SH_loroAsg(3))&&/assignments|tareas/i.test(w.SH_loroAsg(3)));
+check("Loro says when you're all caught up",/caught up/i.test(w.SH_loroAsg(0)));
+var ls=w.SH_loroSay("¡Hola <b>!");check("Loro's bubble shows the parrot logo and safe text",/<svg/.test(ls)&&/&lt;b&gt;/.test(ls)&&!/<b>!/.test(ls));
+var mr=w.Math.random;w.Math.random=function(){return .99};var op=w.document.getElementById("loro-pop");if(op)op.remove();w.SH_loroReset();
+for(var li=0;li<5;li++)w.WK(null,true);var lp=w.document.getElementById("loro-pop");
+check("Loro pops up after 5 right in a row in any practice",!!lp&&/5/.test(lp.textContent)&&lp.classList.contains("on"),lp&&lp.textContent);
+check("The pop-up never blocks taps",lp&&w.getComputedStyle(lp).pointerEvents==="none");
+lp.remove();w.SH_loroReset();for(li=0;li<4;li++)w.SH_loroAns(true);w.SH_loroAns(false);for(li=0;li<4;li++)w.SH_loroAns(true);
+check("A wrong answer resets the streak",!w.document.getElementById("loro-pop"));
+w.SH_loroAns(true);lp=w.document.getElementById("loro-pop");check("Getting it right again starts a new streak",!!lp&&/5/.test(lp.textContent));
+lp.remove();w.SH_loroReset();w.Math.random=mr}catch(e){check("Loro pop-ups work",false,e.message)}
+var lsrc2=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Verb practice cheers too",(lsrc2.match(/tries\+\+;loroAns\(ok\)/g)||[]).length===2);
+check("The assignment list has Loro counting assignments",/loroSay\(loroAsg\(nOpen\)\)/.test(lsrc2));
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
