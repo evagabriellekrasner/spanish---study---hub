@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spanish Study Site Tests</title>
+<title>Loro Tests</title>
 <style>
 :root{--bg:#f7f7fb;--card:#fff;--fg:#1d1d2b;--sub:#6b6b80;--bd:#e3e3ee;--ok:#1f8a4c;--bad:#c0392b;--ac:#7c4dff}
 @media (prefers-color-scheme:dark){:root{--bg:#14141c;--card:#1d1d28;--fg:#ececf4;--sub:#a0a0b4;--bd:#2e2e3c;--ok:#4cc483;--bad:#ff6b5b}}
@@ -13,7 +13,7 @@ details{background:var(--card);border:1px solid var(--bd);border-radius:12px;mar
 .t{padding:6px 16px;border-top:1px solid var(--bd);font-size:.9rem;display:flex;gap:10px}.t .m{flex:1;min-width:0;overflow-wrap:anywhere}.t small{display:block;color:var(--sub)}
 iframe{position:absolute;left:-9999px;width:390px;height:844px;border:0}
 </style></head><body><main>
-<h1>Spanish Study Site tests</h1><p class="sub">Checks the Spanish (every built-in verb in every tense), the sentence grammar, and the main features. Nothing here touches real data: the site runs in a sealed copy with no internet and its own blank storage.</p>
+<h1>Loro tests</h1><p class="sub">Checks the Spanish (every built-in verb in every tense), the sentence grammar, and the main features. Nothing here touches real data: the site runs in a sealed copy with no internet and its own blank storage.</p>
 <div class="sum"><span class="big" id="st">Running…</span><span class="sub" id="cnt" style="margin:0"></span><span style="flex:1"></span><button id="re">Run again</button></div>
 <div id="out"></div></main>
 <script>
@@ -121,14 +121,25 @@ w.localStorage.setItem("pth","Auto");check("Someone who had the old Auto saved l
 try{w.localStorage.setItem("pth","🌿 Mint");check("An old saved theme that no longer exists falls back safely",THM["🌿 Mint"]===undefined)}catch(e){}}
 suite("App icon (home screen and browser tab)");var icS=cur;
 var hd=w.document.head;function hl(r){var e=hd.querySelector('link[rel="'+r+'"]');return e&&e.getAttribute("href")}
-check("Tab icon uses the Ocean Slate blue, not the old pink and purple",/2f5d8f/i.test(hl("icon")||"")&&!/ec4899/i.test(hl("icon")||""));
+check("Tab icon is the Loro parrot in the site blues (yellow beak, no old pink and purple)",/2f5d8f/i.test(hl("icon")||"")&&/ffd36b/i.test(hl("icon")||"")&&!/ec4899/i.test(hl("icon")||""));
 check("Apple home-screen icon is linked",hl("apple-touch-icon")=="apple-touch-icon.png");
 check("App manifest is linked (lets computers and phones install it with the icon)",hl("manifest")=="manifest.webmanifest");
 var ICW=fetch(BASE+"manifest.webmanifest").then(function(r){return r.json()}).then(function(m){var src=(m.icons||[]).map(function(i){return i.sizes});
 return Promise.all(["apple-touch-icon.png","icon-192.png","icon-512.png"].map(function(f){return new Promise(function(ok){var im=new Image();im.onload=function(){ok([f,im.naturalWidth])};im.onerror=function(){ok([f,0])};im.src=BASE+f})})).then(function(sz){return{m:m,src:src,sz:sz}})}).catch(function(e){return{err:String(e)}});
 suite("Site name");
-check("The site is called Spanish Study Site (tab, header, welcome screen)",w.document.title=="Spanish Study Site"&&w.document.body.innerHTML.indexOf("Spanish Study Site")>=0);
+check("The site is called Loro (tab and header)",w.document.title=="Loro"&&((w.document.querySelector("#brandh .bn")||{}).textContent=="Loro"));
+check("The old name Spanish Study Site is gone from what visitors see",!/Spanish Study Site/.test(w.document.title+" "+w.document.body.innerText));
 check("The old name Study Hub is gone from what visitors see",!/Study Hub/.test(w.document.title+" "+w.document.body.innerText));
+suite("Loro parrot logo");
+(function(){var hl=w.document.querySelector("#brandh .logo");
+check("Header shows the parrot logo, not the old chat bubbles",!!hl&&/lp/.test(hl.className)&&!!hl.querySelector("svg")&&!/M14 9a2 2/.test(hl.innerHTML));
+check("Parrot logo has a label for screen readers",!!hl&&hl.getAttribute("aria-label")=="Loro the parrot");
+check("Parrot has its yellow beak and gold sparkles",!!hl&&/ffd36b/i.test(hl.innerHTML)&&(hl.innerHTML.match(/<path d="M\d+ \d+ l/g)||[]).length>=3);
+check("Header parrot is sized for the top bar",!!hl&&Math.round(hl.getBoundingClientRect().width)==40);
+var sh=w.SH_gShow,hid=w.SH_gHide;if(sh){sh();var gl=w.document.querySelector(".hero .logo");
+check("Login screen shows the big parrot above ¡Hola!",!!gl&&/lp/.test(gl.className)&&Math.round(gl.getBoundingClientRect().width)==88);
+check("Login screen says Loro under ¡Hola!",!!gl&&(gl.parentNode.querySelector("p")||{}).textContent=="Loro");if(hid)hid()}
+else check("Login screen can be opened for testing",false)})();
 suite("Animal usernames (no student names)");
 try{var gx="";w.SH_gShow();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gs1").click();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gr1").click();gx+=w.document.getElementById("gate").innerHTML;w.SH_gHide();check("Sign-up and log-in screens show no example usernames or teacher names",!/pandaem7|em7|Martinez|Maria G/i.test(gx))}catch(e){check("Sign-up and log-in screens open",false,e.message)}
 var AN=w.SH_ANI||{},AK=Object.keys(AN);check("There are at least 40 animals to pick from",AK.length>=40,AK.length);
@@ -168,7 +179,7 @@ var c=w.document.querySelector("#sets [data-u]");c.click();check("A unit opens",
 var s=w.document.querySelector("#usets [data-s],#usets [data-b],#usets [data-i]");if(s){s.click();check("A set opens",!w.document.getElementById("cset")||!w.document.getElementById("cset").hidden)}
 w.view("hub")}catch(e){check("Navigation threw an error",false,e.message)}
 check("No errors while clicking around",w.__errs.length===n0,w.__errs.slice(n0).join(" | "));
-ICW.then(function(x){cur=icS;if(x.err)check("App manifest can be read",false,x.err);else{check("Manifest names the app Spanish Study Site",x.m.name=="Spanish Study Site"&&!!x.m.short_name,x.m.name);
+ICW.then(function(x){cur=icS;if(x.err)check("App manifest can be read",false,x.err);else{check("Manifest names the app Loro",x.m.name=="Loro"&&x.m.short_name=="Loro",x.m.name);
 check("Manifest lists 192px and 512px icons",x.src.indexOf("192x192")>=0&&x.src.indexOf("512x512")>=0,x.src.join(", "));
 x.sz.forEach(function(r){check(r[0]+" loads at the right size",r[1]==({"apple-touch-icon.png":180,"icon-192.png":192,"icon-512.png":512})[r[0]],r[1]?r[1]+"px":"missing")})}draw()})}
 function go(){document.getElementById("st").textContent="Running…";document.getElementById("st").className="big";document.getElementById("out").innerHTML="";[].forEach.call(document.querySelectorAll("iframe"),function(f){f.remove()});

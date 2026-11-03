@@ -1,6 +1,6 @@
 {
-  "name": "Spanish Study Site",
-  "short_name": "Spanish Study",
+  "name": "Loro",
+  "short_name": "Loro",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

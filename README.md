@@ -1,4 +1,4 @@
-# Spanish Study Site
+# Loro
 
 A Spanish practice site for students and teachers. Students practice vocabulary and verb conjugations by typing. Teachers create classes, send assignments with goals (for example, "20 terms at 80%" or "40 words in 8 minutes at 80%"), see turned-in work in a gradebook, and see each class's weak spots.
 
