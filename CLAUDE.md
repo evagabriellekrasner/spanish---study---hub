@@ -19,6 +19,7 @@ Notes for Claude (and any developer) working in this repo. Read this before chan
 - **One file:** `site/index.html` holds all the HTML, CSS, and JavaScript, plus the built-in vocab sets and verb data (about 1.9 MB). There's no framework, no bundler, and no npm dependencies for the site.
 - **Code style:** ES5-style JavaScript (`var`, `function`, no arrow functions or classes in site code), with short helper names: `$(id)` gets an element, and `rp(fn, args)` calls a Supabase RPC. Match the surrounding style and keep it compact.
 - **Hosting:** GitHub Pages publishes only `site/` via `.github/workflows/pages.yml`. Every push to `main` goes live in about a minute. Check deploys with `gh run list -R spanishstudysite/spanishstudysite.github.io`.
+- **Keep-awake ping:** `.github/workflows/keep-awake.yml` pings the database every Monday and Thursday so the free Supabase project never pauses. It reads the address and public key from `site/index.html` (`var SBU="…",KEY="…"`), so keep that line in that shape. If a ping fails, GitHub emails the owner. `database/check-size.sql` shows how full the database is (free plan: 500 MB).
 - **Old host:** the old Netlify copy has been deleted. GitHub Pages is the only host.
 - **Database:** Supabase (PostgreSQL). The browser never reads tables directly. It only calls `security definer` SQL functions that check a student's username and PIN, or a teacher's login, first. PINs are bcrypt hashed (`crypt`/`gen_salt('bf')`).
 
