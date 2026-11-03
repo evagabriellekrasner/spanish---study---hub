@@ -46,7 +46,7 @@ Animal usernames are a good choice, but practice records from minors are probabl
 - Disclosure of third parties: Supabase, GitHub, Google Fonts (which sees student IP addresses), and cdnjs. Browser speech recognition may also send student voice to Google or Apple.
 - ~~Device-local name labels (`plbl`) are stored unencrypted, so real names could be left on a shared teacher computer.~~ Fixed: name labels were removed.
 
-### 7. The old Netlify copy still runs against the live database
+### 7. The old Netlify copy still runs against the live database (fixed: script run, Netlify site deleted)
 `netlify.toml` and `close-name-signup.sql` show that the frozen copy is still up and uses the old "type your name" sign-up. It won't receive any of these fixes, and it could collect real names unless `close-name-signup.sql` has been run. Take it down or redirect it, then run that script if it hasn't been run.
 
 ## Fix next: bugs that lose or corrupt data

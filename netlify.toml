@@ -1,6 +1,0 @@
-# The site now publishes from GitHub Pages (.github/workflows/pages.yml).
-# Netlify skips every build, so pushes don't use Netlify credits; the old Netlify copy stays up as-is.
-[build]
-  publish = "site"
-  command = ""
-  ignore = "exit 0"
