@@ -51,7 +51,7 @@ Animal usernames are a good choice, but practice records from minors are probabl
 
 ## Fix next: bugs that lose or corrupt data
 
-### 8. Students on shared devices can get each other's weak spots
+### 8. Students on shared devices can get each other's weak spots (fixed: logout clears them)
 `logout()` removes `pstu` but not `pm`, the weak-spot data (`site/index.html:1067`). On the next login, `apply()` sees the leftover entries and pushes them to the new student's account (`:1051`). Teacher weak-spot reports then become wrong. This will be common with Chromebook carts. I found this by reading the code and haven't reproduced it.
 
 ### 9. A teacher's library can be overwritten
@@ -65,7 +65,7 @@ Animal usernames are a good choice, but practice records from minors are probabl
 - Teachers will do this at the end of the year, or by accident, and lose the gradebook.
 - **Fix:** add archive and soft delete, with a recovery window.
 
-### 11. Due dates and "Late" labels are wrong in US time zones
+### 11. Due dates and "Late" labels are wrong in US time zones (fixed: local dates, tests run in Chicago time)
 - `fd()` parses `2026-11-05` as midnight UTC, so US users see **Nov 4** (`site/index.html:1042`).
 - The "Late" check compares a UTC date with the due date (`:1127`). Work turned in at 8 pm Eastern on the due date shows as late.
 - The database uses server time and the browser uses local time, so choose one rule, such as a school time zone.

@@ -215,6 +215,12 @@ check("The assignment list has Loro counting assignments",/loroSay\(loroAsg\(nOp
 suite("Launch safety");
 check("The site never uses the old name sign-up",!/rp\("student_signup"/.test(lsrc2));
 check("The keep-awake ping can find the database address and public key",/var SBU="https:\/\/[a-z0-9]+\.supabase\.co",KEY="[^"]+"/.test(lsrc2));
+suite("School time zone and shared Chromebooks");
+try{eq("A due date shows on the right day in US time zones",w.SH_fd("2026-11-05"),new Date(2026,10,5).toLocaleDateString([],{month:"short",day:"numeric"}));
+eq("Work turned in at 8 pm on the due date counts as that day",w.SH_ldate(new Date(2026,10,5,20,0).toISOString()),"2026-11-05");
+w.localStorage.setItem("pm",JSON.stringify({"perro|dog":2}));w.SH_logout();check("Logging out clears weak spots so the next student doesn't get them",!w.localStorage.getItem("pm"),w.localStorage.getItem("pm"))}catch(e){check("Time zone and log out checks work",false,e.message)}
+var lsrcTZ=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
+check("Late uses the student's local date",!/submitted\.slice\(0,10\)>a\.due/.test(lsrcTZ));
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
