@@ -165,7 +165,7 @@ eq("Students are greeted by their animal, not the code",w.SH_hiName("pandaek1"),
 suite("No real names for students");
 check("Teachers can't type a real name next to a student",typeof w.SH_setLbl=="undefined"&&!w.document.getElementById("slb"));
 eq("Students always show as their animal username",w.SH_dn("pandaem7"),"pandaem7");
-check("Old name labels are wiped from the browser",w.localStorage.getItem("plbl")===null);
+check("The site has no name label code left",!/plbl/.test(w.document.documentElement.innerHTML.split("<!--CHECKS-->")[0]));
 suite("Deleting assignments");
 var sc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
 check("Deleting a class warns that its student accounts go too (so animals free up)",/Delete this class\?[^"]*animal accounts are deleted too/.test(sc));

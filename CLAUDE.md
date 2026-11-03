@@ -55,7 +55,7 @@ git push origin main            # goes live via GitHub Pages
 
 ## Key concepts
 - **Animal usernames:** each class has a `tag` (the teacher's initials plus the period, e.g. `ab3`). A student picks an animal from a grid after entering the class code, so the username is `animal + tag`. An animal is "taken" only by members of that same class. Deleting a class deletes its animal-only student accounts.
-- **No name labels:** teachers see only animal usernames. The old private name labels were removed, and the site wipes any leftover `plbl` key from the browser. Teachers match usernames to real names outside Loro (school gradebook or a paper roster). `dn(n)` just returns the username.
+- **No name labels:** teachers see only animal usernames. The old private name labels were removed completely. Teachers match usernames to real names outside Loro (school gradebook or a paper roster). `dn(n)` just returns the username.
 - **Assignments:** each assignment has a goal type: minutes practiced, terms completed at a minimum %, or a timed goal (N words in M minutes at X%). Students turn work in, and teachers see it in the gradebook.
 - **Weak spots:** terms a student keeps missing. They're saved per student, and teachers can view them per student and per class.
 - **Libraries:** each teacher has their own library of units and sets, and can share sets with another teacher by share code.
