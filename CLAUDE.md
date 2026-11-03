@@ -1,0 +1,68 @@
+# CLAUDE.md
+
+Notes for Claude (and any developer) working in this repo. Read this before changing anything.
+
+## What this is
+**Loro** is a Spanish practice site for high school students and their teachers. Students practice vocabulary and verb conjugations by typing. Teachers make classes, send assignments with goals, and see results and weak spots. See `PRD.md` for the full product picture and `README.md` for the overview.
+
+- Live site: https://spanishstudysite.github.io/
+- Repo: https://github.com/spanishstudysite/spanishstudysite.github.io
+
+## Standing rules
+1. **Every new feature or fix ships with a new test** in `tests/tests.html`. Prove the test can fail (break the feature in a throwaway copy, see it go red), then confirm the full suite is green.
+2. **No student personal info, ever.** Students sign up with an animal username (animal + class tag, e.g. `koalaab3`) and a 4-digit PIN. Never add fields that collect real names, emails, birthdays, or photos for students. Never put example student names on screens.
+3. **No secrets in the repo.** The repo is public. Never commit the teacher code, database passwords, the Supabase service key, or the checks passcode. Only the public Supabase anon key and the checks passcode's SHA-256 hash belong in `site/index.html`.
+4. **Don't change the name, logo, or look without asking the owner first.**
+5. Keep copy plain and friendly. Students are teenagers, and teachers are busy.
+
+## How it's built
+- **One file:** `site/index.html` holds all the HTML, CSS, and JavaScript, plus the built-in vocab sets and verb data (about 1.9 MB). There's no framework, no bundler, and no npm dependencies for the site.
+- **Code style:** ES5-style JavaScript (`var`, `function`, no arrow functions or classes in site code), with short helper names: `$(id)` gets an element, and `rp(fn, args)` calls a Supabase RPC. Match the surrounding style and keep it compact.
+- **Hosting:** GitHub Pages publishes only `site/` via `.github/workflows/pages.yml`. Every push to `main` goes live in about a minute. Check deploys with `gh run list -R spanishstudysite/spanishstudysite.github.io`.
+- **Old host:** `netlify.toml` has `ignore = "exit 0"`, so the old Netlify copy is frozen and skips every build. Leave it that way.
+- **Database:** Supabase (PostgreSQL). The browser never reads tables directly. It only calls `security definer` SQL functions that check a student's username and PIN, or a teacher's login, first. PINs are bcrypt hashed (`crypt`/`gen_salt('bf')`).
+
+## Folders
+| Path | What it is |
+| --- | --- |
+| `site/index.html` | The whole app |
+| `site/manifest.webmanifest`, `site/*.png` | App name and icons (tab, phone home screen) |
+| `tests/tests.html` | Test source (never published directly) |
+| `tests/build-checks.py` | Embeds the tests into `index.html` as the private `#checks` page |
+| `tests/run-tests.js` | Runs the tests headlessly with Playwright |
+| `database/*.sql` | Database setup and update scripts |
+| `TESTING.md` | Testing details |
+| `docs/` | One-pager PDF for teachers and the school |
+
+## Making a change
+```bash
+# 1. edit site/index.html and add a test in tests/tests.html
+python3 tests/build-checks.py   # embed the tests into the site's #checks page
+node tests/run-tests.js         # must end with "0 failed"
+git push origin main            # goes live via GitHub Pages
+```
+- Always rerun `build-checks.py` after editing **either** `site/index.html` or `tests/tests.html`, then commit both files.
+- Tests run against a sealed copy of the site with no internet and blank storage, so they never touch real data.
+- If a test needs a function that lives inside a closure, expose it as `window.SH_name` (for example `window.SH_dn = dn`) and call `w.SH_name` from the test.
+- Inside `tests/tests.html`, write `suite("Plain-English name")`, then `check(name, ok, detail)` or `eq(name, got, want)`. `w` is the site's window.
+
+## Database changes
+- Nobody can reach the live database from the repo or a dev container. Write a new file in `database/` whose header says what it does and whether it's safe to run again. The owner then pastes it into the Supabase SQL Editor and runs it.
+- Use `create or replace function`, `add column if not exists`, and similar statements, so scripts can be run twice safely.
+- Grant new functions to `anon`, and revoke helper functions (names starting with `_`) from `public, anon, authenticated`.
+- When the site calls a new function, show a friendly toast if the function is missing, like "needs a quick database update", instead of crashing.
+- Teacher functions take `pw` (JSON `{n, p, l}`) and call `_tctx(pw)` to check the teacher.
+
+## Key concepts
+- **Animal usernames:** each class has a `tag` (the teacher's initials plus the period, e.g. `ab3`). A student picks an animal from a grid after entering the class code, so the username is `animal + tag`. An animal is "taken" only by members of that same class. Deleting a class deletes its animal-only student accounts.
+- **Private labels:** teachers can attach a real name to an animal username. The label is stored **only in that teacher's browser** (`localStorage` key `plbl`) and is never sent to the database. `dn(n)` shows it as "Label (username)".
+- **Assignments:** each assignment has a goal type: minutes practiced, terms completed at a minimum %, or a timed goal (N words in M minutes at X%). Students turn work in, and teachers see it in the gradebook.
+- **Weak spots:** terms a student keeps missing. They're saved per student, and teachers can view them per student and per class.
+- **Libraries:** each teacher has their own library of units and sets, and can share sets with another teacher by share code.
+- **Themes:** students can pick a color theme. Default is Ocean Slate blue (`#3f78b5` → `#2f5d8f`).
+
+## Gotchas
+- `index.html` is huge. Search with `grep -n` and edit with exact, small replacements. Don't rewrite whole sections.
+- The `<!--CHECKS-->…<!--/CHECKS-->` block at the end of `index.html` is generated. Never hand-edit it. Rerun `build-checks.py` instead.
+- The `#gate` (login screen) must scroll on short screens. Keep content able to scroll instead of using a centered flex box that cuts off the top.
+- `database/close-name-signup.sql` hasn't been run yet. Run it only after everyone is on the new link, because it disables the old name sign-up.
