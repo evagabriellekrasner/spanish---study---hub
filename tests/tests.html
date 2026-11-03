@@ -201,12 +201,15 @@ var mr=w.Math.random;w.Math.random=function(){return .99};var op=w.document.getE
 for(var li=0;li<5;li++)w.WK(null,true);var lp=w.document.getElementById("loro-pop");
 check("Loro pops up after 5 right in a row in any practice",!!lp&&/5/.test(lp.textContent)&&lp.classList.contains("on"),lp&&lp.textContent);
 check("The pop-up never blocks taps",lp&&w.getComputedStyle(lp).pointerEvents==="none");
+var lcs=w.getComputedStyle(lp),lpp=lp.querySelector(".loro-p");check("Loro slides in from the right side",lcs.right==="16px"&&/cubic-bezier/.test(lcs.transitionTimingFunction),lcs.right);
+check("Loro is big in the pop-up",lpp&&lpp.getBoundingClientRect().width>=60,lpp&&lpp.getBoundingClientRect().width);
 lp.remove();w.SH_loroReset();for(li=0;li<4;li++)w.SH_loroAns(true);w.SH_loroAns(false);for(li=0;li<4;li++)w.SH_loroAns(true);
 check("A wrong answer resets the streak",!w.document.getElementById("loro-pop"));
 w.SH_loroAns(true);lp=w.document.getElementById("loro-pop");check("Getting it right again starts a new streak",!!lp&&/5/.test(lp.textContent));
 lp.remove();w.SH_loroReset();w.Math.random=mr}catch(e){check("Loro pop-ups work",false,e.message)}
 var lsrc2=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
 check("Verb practice cheers too",(lsrc2.match(/tries\+\+;loroAns\(ok\)/g)||[]).length===2);
+check("Loro stays up for a few seconds",/classList\.remove\("on"\)\},5500\)/.test(lsrc2));
 check("The assignment list has Loro counting assignments",/loroSay\(loroAsg\(nOpen\)\)/.test(lsrc2));
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
