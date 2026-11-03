@@ -47,7 +47,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
   - Sign-up screens show no example names.
 - **Student data stored:** username, a bcrypt-hashed PIN, class membership, practice results, and weak spots. Nothing else.
 - **Teacher accounts** use a name and password. Creating one needs the department's teacher code.
-- **Private labels:** a teacher can label an animal username with a real name. The label is stored only in that teacher's browser.
+- **No name labels:** teachers see only animal usernames and match them to real names outside Loro, such as in the school gradebook.
 - All database access goes through server functions that check the username and PIN, or the teacher's login. The browser never reads tables directly.
 - Deleting a class also deletes the animal-only student accounts in it.
 

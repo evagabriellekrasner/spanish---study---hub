@@ -33,7 +33,7 @@
 - Assignments can be edited after they go out, and deleted one at a time, all ended ones at once, or all of them.
 - **Gradebook and activity:** see who turned in work, their scores, and each student's full history.
 - **Weak spots** for each student and for each class.
-- **Private name labels:** note which student is "koalaab3". The note stays only in your browser and is never uploaded.
+- **Animal usernames only:** Loro never stores real student names, not even on your computer. Keep your own list of which student is "koalaab3" in your school gradebook or on paper.
 - **Your own library** of units and sets. You can share sets with another teacher by share code.
 
 ## Privacy
