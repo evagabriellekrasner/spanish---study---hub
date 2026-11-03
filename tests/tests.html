@@ -162,9 +162,10 @@ w.document.getElementById("gg").click();check("A 4-digit PIN is still required",
 w.document.getElementById("gs0").click();var gl=w.document.querySelector('label[for="gn"]');check("Log in asks for a username",gl&&/Username/.test(gl.textContent));
 w.SH_gA(null);w.SH_gHide()}catch(e){check("Animal sign-up screen works",false,e.message)}
 eq("Students are greeted by their animal, not the code",w.SH_hiName("pandaek1"),"Panda 🐼");eq("Teachers are still greeted by name",w.SH_hiName("Teacher Test"),"Teacher Test");
-try{w.SH_setLbl("pandaem7","Maria");eq("Teachers can add a private name label",w.SH_dn("pandaem7"),"Maria (pandaem7)");
-check("The label is saved only on this device",/Maria/.test(w.localStorage.getItem("plbl")||""));
-w.SH_setLbl("pandaem7","");eq("Clearing the label shows just the username",w.SH_dn("pandaem7"),"pandaem7")}catch(e){check("Private name labels work",false,e.message)}
+suite("No real names for students");
+check("Teachers can't type a real name next to a student",typeof w.SH_setLbl=="undefined"&&!w.document.getElementById("slb"));
+eq("Students always show as their animal username",w.SH_dn("pandaem7"),"pandaem7");
+check("Old name labels are wiped from the browser",w.localStorage.getItem("plbl")===null);
 suite("Deleting assignments");
 var sc=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
 check("Deleting a class warns that its student accounts go too (so animals free up)",/Delete this class\?[^"]*animal accounts are deleted too/.test(sc));
