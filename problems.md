@@ -11,6 +11,7 @@ Review of the repo as of commit `a5407ab`. I read the code and SQL, and checked 
 - Student usernames are predictable: animal + class tag, from a list of 50 animals (`database/animal-logins.sql`). Anyone with a class code can see which animals are taken, using `class_animals`.
 - **Students can attack their teacher.** `student_get` gives students the teacher's account name. A student could try all 10,000 PINs from the browser console, probably in well under an hour. They would then control the gradebook, could reset student PINs, and could delete students or classes.
 - The bcrypt hashes use the default low cost (`gen_salt('bf')`). With only 10,000 possible PINs, a database leak would expose all of them almost immediately.
+- **Partly fixed:** teachers now use real passwords (8+ characters, letters and numbers) via `database/teacher-passwords.sql`. Lockouts were left out on purpose.
 - **Fix:** move teachers to Supabase Auth or Google sign-in, with real passwords. Add attempt tracking and lockouts per account and per IP. Longer term, use school SSO for students as well.
 
 ### 2. PINs are kept in plain text in the browser and sent on every request
@@ -24,7 +25,7 @@ Review of the repo as of commit `a5407ab`. I read the code and SQL, and checked 
 - `save_sets` and `teacher_share` accept any JSON, and share codes pass that JSON from teacher to teacher. A crafted image value could run script for every student who opens the set, and that script could read their stored PIN. A compromised teacher account therefore reaches every student.
 - `gtext()` also inserts `a.mode` without escaping at `site/index.html:1122`.
 - GitHub Pages can't set security headers, and the site has no Content-Security-Policy.
-- **Fix:** escape all of these and allow only `data:image/` or `https:` image values. Validate library JSON on the server. Add a CSP meta tag. Over time, replace `innerHTML` string building, which is used everywhere.
+- **Partly fixed:** picture links now go through `isrc()` (only `data:image/` or `https:`, escaped), and `gtext()` output is escaped. Still to do: Validate library JSON on the server. Add a CSP meta tag. Over time, replace `innerHTML` string building, which is used everywhere.
 
 ### 4. Students can write their own grades
 - The browser does all the scoring, then calls `student_log` with any score, total and seconds (`database/fix-turn-in.sql`). One console call can record 100/100 or complete a timed goal.
