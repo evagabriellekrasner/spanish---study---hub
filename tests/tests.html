@@ -192,7 +192,8 @@ var lsrc=[].map.call(w.document.scripts,function(x){return x.textContent}).filte
 check("Old guest sessions don't skip the log-in screen",!/pguest/.test(lsrc));
 suite("Loro the parrot");
 try{var L0=w.SH_LORO;check("Loro has lots of different cheers",L0.cheer.length>=8&&L0.streak.length>=4&&L0.oops.length>=3);
-var allL=L0.cheer.concat(L0.oops).join(" ");check("Cheers mix English and Spanish",/¡/.test(allL)&&/ you/i.test(allL));
+var allL=L0.cheer.concat(L0.oops).join(" ");var allW=L0.cheer.concat(L0.oops,L0.done,L0.streak.map(function(f){return f(5)})).join(" ");check("Loro only uses Spanish students already know (no slang)",!/crack|seguidas|racha|así se hace|ánimo|sigue así|qué bien|eres genial/i.test(allW),allW);
+check("Cheers mix English and Spanish",/¡/.test(allL)&&/ you/i.test(allL));
 check("Loro counts one assignment",/1/.test(w.SH_loroAsg(1))&&/assignment|tarea/i.test(w.SH_loroAsg(1)));
 check("Loro counts several assignments",/3/.test(w.SH_loroAsg(3))&&/assignments|tareas/i.test(w.SH_loroAsg(3)));
 check("Loro says when you're all caught up",/caught up/i.test(w.SH_loroAsg(0)));
