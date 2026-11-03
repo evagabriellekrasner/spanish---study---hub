@@ -138,7 +138,10 @@ check("Parrot has its yellow beak and gold sparkles",!!hl&&/ffd36b/i.test(hl.inn
 check("Header parrot is sized for the top bar",!!hl&&Math.round(hl.getBoundingClientRect().width)==40);
 var sh=w.SH_gShow,hid=w.SH_gHide;if(sh){sh();var gl=w.document.querySelector(".hero .logo");
 check("Login screen shows the big parrot above ¡Hola!",!!gl&&/lp/.test(gl.className)&&Math.round(gl.getBoundingClientRect().width)==88);
-check("Login screen says Loro under ¡Hola!",!!gl&&(gl.parentNode.querySelector("p")||{}).textContent=="Loro");if(hid)hid()}
+check("Login screen says Loro under ¡Hola!",!!gl&&(gl.parentNode.querySelector("p")||{}).textContent=="Loro");
+var g=w.document.getElementById("gate"),ob=g.style.bottom,oh=g.style.height;g.style.bottom="auto";g.style.height="300px";g.scrollTop=0;
+check("On a short screen the parrot isn't cut off at the top of the login screen",!!gl&&gl.getBoundingClientRect().top>=g.getBoundingClientRect().top,Math.round(gl.getBoundingClientRect().top-g.getBoundingClientRect().top)+"px");
+g.style.bottom=ob;g.style.height=oh;if(hid)hid()}
 else check("Login screen can be opened for testing",false)})();
 suite("Animal usernames (no student names)");
 try{var gx="";w.SH_gShow();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gs1").click();gx+=w.document.getElementById("gate").innerHTML;w.document.getElementById("gr1").click();gx+=w.document.getElementById("gate").innerHTML;w.SH_gHide();check("Sign-up and log-in screens show no example usernames or teacher names",!/pandaem7|em7|Martinez|Maria G/i.test(gx))}catch(e){check("Sign-up and log-in screens open",false,e.message)}
