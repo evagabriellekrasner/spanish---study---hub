@@ -6,7 +6,7 @@ Review of the repo as of commit `a5407ab`. I read the code and SQL, and checked 
 
 ## Fix first: security and student privacy
 
-### 1. PINs can be guessed, and nothing slows it down
+### 1. PINs can be guessed, and nothing slows it down (partly fixed: 1-minute wait after 5 wrong PINs)
 - Every student and teacher logs in with a name and a 4-digit PIN, so there are only 10,000 possibilities. I found no rate limit or lockout in the login checks (`_tctx` in `database/libraries.sql:33`). `_sid`, the student login check, isn't in the repo, so confirm it on the live database.
 - Student usernames are predictable: animal + class tag, from a list of 50 animals (`database/animal-logins.sql`). Anyone with a class code can see which animals are taken, using `class_animals`.
 - **Students can attack their teacher.** `student_get` gives students the teacher's account name. A student could try all 10,000 PINs from the browser console, probably in well under an hour. They would then control the gradebook, could reset student PINs, and could delete students or classes.
@@ -94,7 +94,7 @@ create index on assignments (owner_id, created_at desc);
 ### 15. `teacher_report` will slow down as data grows
 It loads everything in one call: all students, all weak spots, and per-student progress for every assignment including ended ones (`database/timed-goal.sql:50`). Those progress lookups repeat for each assignment and student. The site prefetches this report on the teacher home screen. Split it by class, page ended assignments, and store totals instead of recalculating them.
 
-### 16. `results` grows quickly with no cleanup
+### 16. `results` grows quickly with no cleanup (partly fixed: assignment minutes go into one row per session)
 Active assignments log a row about once a minute. As a rough estimate, 1,000 students × 20 minutes × 5 days × 36 weeks is **3.6 million rows a year**, before counting round results. Every write also runs bcrypt. Batch the time logs, roll up old data, and decide how long to keep raw rows.
 
 ### 17. Every page load is heavy
