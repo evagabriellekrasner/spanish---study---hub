@@ -233,6 +233,8 @@ w.document.getElementById("idleY").click();check("Tapping “I’m still here”
 var t1=Date.now();w.SH_idleSet(t1);w.SH_idleCheck(t1+30*60000+1000);w.SH_idleCheck(t1+31*60000+2000);check("No answer for 1 minute logs them out",!w.SH_ST()&&!w.document.getElementById("idle"));
 setST({n:"koalaab3",p:"1234"});var t2=Date.now();w.SH_idleSet(t2);w.SH_idleCheck(t2+3*3600000);check("A Chromebook closed for hours logs out right away (no “Still there?” for the next student)",!w.SH_ST());
 setST({n:"teach",p:"x",t:1});w.SH_idleSet(t2);w.SH_idleCheck(t2+3*3600000);check("Teachers aren't logged out",!!w.SH_ST());setST(null);w.SH_idleSet(Date.now());try{w.SH_gHide()}catch(e){}}catch(e){check("Idle log out works",false,e.message)}
+suite("Slowing down PIN guessing");
+try{check("After too many wrong PINs, students are told to wait a minute or ask their teacher",/wait 1 minute/i.test(w.SH_emsg({message:"too many tries"}))&&/teacher/i.test(w.SH_emsg({message:"too many tries"})),w.SH_emsg({message:"too many tries"}))}catch(e){check("PIN wait message works",false,e.message)}
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
