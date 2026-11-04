@@ -135,13 +135,13 @@ I couldn't see your Supabase plan. Before rollout, confirm the following:
 - The site's error messages tell students to "ask your teacher to run fix-turn-in.sql", which shows front-end and database changes aren't released together.
 - **Fix:** run `supabase db dump` now. Move to numbered migrations with the Supabase CLI, and use a separate staging project. Confirm that automated backups exist, and test a restore.
 
-### 22. Nothing stops a bad deploy
+### 22. Nothing stops a bad deploy (partly fixed: checks run before publishing)
 - `.github/workflows/pages.yml` publishes every push to `main` without running tests, and goes live for all students in about a minute.
 - There's no `package.json`, so the Playwright test dependency isn't pinned.
 - The tests block all network access, so **no SQL, permission or login logic is tested**. That's where most of the serious problems above are.
 - **Fix:** run tests in CI before deploying. Add database tests against a local Supabase, including tests that try to access another teacher's data. Add a staging site, and avoid deploying during school hours.
 
-### 23. You can't see failures
+### 23. You can't see failures (partly fixed: private error log with daily email)
 I found no error reporting, global error handler, uptime monitoring or usage analytics. Many failures are swallowed by empty `catch` blocks. If login breaks in first period, you'll hear about it from a teacher. Add privacy-reviewed error reporting, uptime and database alerts, and a status or support contact.
 
 ### 24. The single large file will get harder to change safely

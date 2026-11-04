@@ -235,6 +235,16 @@ setST({n:"koalaab3",p:"1234"});var t2=Date.now();w.SH_idleSet(t2);w.SH_idleCheck
 setST({n:"teach",p:"x",t:1});w.SH_idleSet(t2);w.SH_idleCheck(t2+3*3600000);check("Teachers aren't logged out",!!w.SH_ST());setST(null);w.SH_idleSet(Date.now());try{w.SH_gHide()}catch(e){}}catch(e){check("Idle log out works",false,e.message)}
 suite("Slowing down PIN guessing");
 try{check("After too many wrong PINs, students are told to wait a minute or ask their teacher",/wait 1 minute/i.test(w.SH_emsg({message:"too many tries"}))&&/teacher/i.test(w.SH_emsg({message:"too many tries"})),w.SH_emsg({message:"too many tries"}))}catch(e){check("PIN wait message works",false,e.message)}
+suite("Private error log");
+try{var sent=[],of=w.fetch;w.fetch=function(u,o){sent.push({u:String(u),b:o&&o.body||""});return Promise.resolve(new w.Response("null",{status:200}))};
+w.SH_setST({n:"koalaab3",p:"4821"});w.SH_reportErr("Cannot read x for koalaab3 with 4821");
+var s0=sent[0]||{u:"",b:""};check("A broken screen sends the error to the private log",/rpc\/log_error/.test(s0.u),s0.u);
+check("The error never includes the username or PIN",!/koalaab3|4821/.test(s0.b)&&/\[user\]/.test(s0.b)&&/\[pin\]/.test(s0.b),s0.b);
+check("It says if it was a student or teacher, nothing more",/"w":"student"/.test(s0.b),s0.b);
+w.SH_reportErr("Cannot read x for koalaab3 with 4821");check("The same error is only sent once",sent.length===1,sent.length);
+w.SH_reportErr("Failed to fetch");check("Being offline isn't reported",sent.length===1,sent.length);
+for(var ei=0;ei<10;ei++)w.SH_reportErr("err "+ei);check("A page sends at most 5 errors",sent.length===5,sent.length);
+w.fetch=of;w.SH_setST(null)}catch(e){check("Error log works",false,e.message)}
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
