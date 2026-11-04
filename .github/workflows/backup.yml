@@ -1,0 +1,55 @@
+# Weekly database backup. Every Sunday night this saves a locked (encrypted) copy of the whole database
+# as a download on this run's page, kept for 90 days. If it fails, GitHub emails the owner.
+# Needs two secrets (Settings > Secrets and variables > Actions):
+#   DATABASE_URL       the Supabase "Session pooler" connection string, with your database password in it
+#   BACKUP_PASSPHRASE  a long passphrase you make up and keep in a safe place. You need it to open a backup.
+# How to restore: see BACKUPS.md.
+name: Weekly database backup
+on:
+  schedule:
+    - cron: "0 7 * * 0"   # Sundays, about 1-2 AM Chicago time
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the secrets are set
+        id: chk
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          # Until both secrets are added, skip quietly (no failure email).
+          if [ -z "$DATABASE_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::notice::Backup skipped: add the DATABASE_URL and BACKUP_PASSPHRASE secrets to turn it on (see BACKUPS.md)."
+            echo "ready=no" >> "$GITHUB_OUTPUT"
+          else echo "ready=yes" >> "$GITHUB_OUTPUT"; fi
+      - name: Install the database tools
+        if: steps.chk.outputs.ready == 'yes'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-17
+      - name: Save and lock the backup
+        if: steps.chk.outputs.ready == 'yes'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -o pipefail
+          F="loro-backup-$(date -u +%Y-%m-%d).sql.gz.gpg"
+          /usr/lib/postgresql/17/bin/pg_dump "$DATABASE_URL" --schema=public --no-owner --no-privileges \
+            | gzip -9 \
+            | gpg --batch --yes --symmetric --cipher-algo AES256 --passphrase "$BACKUP_PASSPHRASE" -o "$F"
+          ls -la "$F"
+          test "$(stat -c %s "$F")" -gt 1000 || (echo "The backup came out empty." && exit 1)
+          echo "FILE=$F" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@v4
+        if: steps.chk.outputs.ready == 'yes'
+        with:
+          name: ${{ env.FILE }}
+          path: ${{ env.FILE }}
+          retention-days: 90

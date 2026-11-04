@@ -1,0 +1,34 @@
+# Daily error check. Every morning this asks the database if students or teachers hit any errors in the
+# last 24 hours. If there were any, this run "fails" on purpose so GitHub emails the owner, and the
+# errors are listed on the run's page. No usernames or PINs are ever stored with an error.
+# Needs the OWNER_TOKEN secret (shown once when you run database/error-log.sql).
+name: Daily error check
+on:
+  schedule:
+    - cron: "0 12 * * *"   # every day, about 6-7 AM Chicago time
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Look for errors from the last day
+        env:
+          OWNER_TOKEN: ${{ secrets.OWNER_TOKEN }}
+        run: |
+          if [ -z "$OWNER_TOKEN" ]; then echo "Add the OWNER_TOKEN secret first (see BACKUPS.md)."; exit 1; fi
+          SBU=$(grep -o 'var SBU="https://[a-z0-9]*\.supabase\.co"' site/index.html | head -1 | cut -d'"' -f2)
+          KEY=$(grep -o 'var SBU="[^"]*",KEY="[^"]*"' site/index.html | head -1 | cut -d'"' -f4)
+          BODY=$(jq -n --arg t "$OWNER_TOKEN" '{tok:$t,hours:24}')
+          OUT=$(curl -s -m 60 -w '\n%{http_code}' -X POST "$SBU/rest/v1/rpc/owner_errors" \
+            -H "apikey: $KEY" -H "Content-Type: application/json" -d "$BODY")
+          CODE=$(echo "$OUT" | tail -1); JSON=$(echo "$OUT" | sed '$d')
+          if [ "$CODE" != "200" ]; then echo "Couldn't read the error log (status $CODE): $JSON"; exit 1; fi
+          N=$(echo "$JSON" | jq 'length')
+          if [ "$N" = "0" ]; then echo "No errors in the last 24 hours."; exit 0; fi
+          echo "There were errors in the last 24 hours:"
+          echo "$JSON" | jq -r '.[] | "- \(.times)x  [\(.place)]  \(.msg)"'
+          echo "::error::Loro had $N kinds of errors in the last 24 hours. Open this run to see them."
+          exit 1

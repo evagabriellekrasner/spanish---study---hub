@@ -1,18 +1,40 @@
-# Publishes the site/ folder to GitHub Pages on every push to main.
+# Publishes the site/ folder to GitHub Pages on every push to main, but only if all checks pass.
 name: Publish site
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'pull_request' && format('checks-{0}', github.ref) || 'pages' }}
   cancel-in-progress: true
 jobs:
+  # Runs every automated check first. If anything fails, the site stays on the last good version
+  # and GitHub emails whoever pushed the change.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check the test page was rebuilt
+        run: |
+          python3 tests/build-checks.py
+          git diff --exit-code site/index.html || (echo "Run python3 tests/build-checks.py and commit site/index.html" && exit 1)
+      - name: Install the test browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Run all checks
+        run: node tests/run-tests.js
   deploy:
+    needs: test
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
