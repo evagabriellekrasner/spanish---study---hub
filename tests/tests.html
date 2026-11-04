@@ -221,6 +221,18 @@ eq("Work turned in at 8 pm on the due date counts as that day",w.SH_ldate(new Da
 w.localStorage.setItem("pm",JSON.stringify({"perro|dog":2}));w.SH_logout();check("Logging out clears weak spots so the next student doesn't get them",!w.localStorage.getItem("pm"),w.localStorage.getItem("pm"))}catch(e){check("Time zone and log out checks work",false,e.message)}
 var lsrcTZ=[].map.call(w.document.scripts,function(x){return x.textContent}).filter(function(x){return x.indexOf("suite(")<0}).join("\n");
 check("Late uses the student's local date",!/submitted\.slice\(0,10\)>a\.due/.test(lsrcTZ));
+suite("Idle log out on shared Chromebooks");
+try{var iST=w.SH_ST&&w.SH_ST();var now0=Date.now();w.SH_idleSet(now0);
+w.localStorage.setItem("pstu",JSON.stringify({n:"koalaab3",p:"1234"}));
+var setST=w.SH_setST||null;
+check("Students can be logged in for the idle test",!!setST,"needs SH_setST");
+setST({n:"koalaab3",p:"1234"});
+w.SH_idleCheck(now0+29*60000);check("Someone studying (under 30 idle minutes) stays logged in",!w.document.getElementById("idle")&&!!w.SH_ST());
+w.SH_idleCheck(now0+30*60000+1000);check("After 30 idle minutes, Loro asks “Still there?”",!!w.document.getElementById("idle")&&!!w.SH_ST());
+w.document.getElementById("idleY").click();check("Tapping “I’m still here” keeps them logged in",!w.document.getElementById("idle")&&!!w.SH_ST());
+var t1=Date.now();w.SH_idleSet(t1);w.SH_idleCheck(t1+30*60000+1000);w.SH_idleCheck(t1+31*60000+2000);check("No answer for 1 minute logs them out",!w.SH_ST()&&!w.document.getElementById("idle"));
+setST({n:"koalaab3",p:"1234"});var t2=Date.now();w.SH_idleSet(t2);w.SH_idleCheck(t2+3*3600000);check("A Chromebook closed for hours logs out right away (no “Still there?” for the next student)",!w.SH_ST());
+setST({n:"teach",p:"x",t:1});w.SH_idleSet(t2);w.SH_idleCheck(t2+3*3600000);check("Teachers aren't logged out",!!w.SH_ST());setST(null);w.SH_idleSet(Date.now());try{w.SH_gHide()}catch(e){}}catch(e){check("Idle log out works",false,e.message)}
 suite("Safe picture links");
 try{eq("A normal picture link still works",w.SH_isrc("https://example.com/perro.jpg"),"https://example.com/perro.jpg");
 eq("Built-in and uploaded pictures still work",w.SH_isrc("data:image/jpeg;base64,/9j/4AAQ=="),"data:image/jpeg;base64,/9j/4AAQ==");
