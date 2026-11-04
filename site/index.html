@@ -1098,7 +1098,7 @@ function idleOut(){idleHide();if(!ST)return;try{if(AS)logRes("assignment",AS.set
 function idleCheck(now){now=now||Date.now();if(!ST||ST.t){idleHide();return}var g=now-idleAt;if(g<IDLE){if(idleAsk)idleHide();return}
 if(g>=IDLE+IDLEW||(idleAsk&&now-idleAsk>=IDLEW)){idleOut();return}
 if(!idleAsk){idleAsk=now;var o=document.createElement("div");o.id="idle";o.setAttribute("role","alertdialog");o.setAttribute("aria-label","Still there?");o.setAttribute("style","position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:65;padding:16px");
-o.innerHTML='<div class="card mbox" style="text-align:center"><h3 style="margin:0 0 4px">👋 Still there?</h3><p class="sub" style="margin:0 0 12px">You’ll be logged out in 1 minute so the next person can’t use your account.</p><button class="go" id="idleY">I’m still here</button></div>';document.body.appendChild(o);$("idleY").onclick=function(){idleAt=Date.now();idleHide()}}}
+o.innerHTML='<div class="card mbox" style="text-align:center"><h3 style="margin:0 0 4px">👋 Still there?</h3><p class="sub" style="margin:0 0 12px">You’ll be logged out in 1 minute.</p><button class="go" id="idleY">I’m still here</button></div>';document.body.appendChild(o);$("idleY").onclick=function(){idleAt=Date.now();idleHide()}}}
 setInterval(function(){idleCheck()},5000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")idleCheck()});
 window.SH_idleCheck=idleCheck;window.SH_setST=function(v){ST=v};window.SH_idleSet=function(t){idleAt=t;idleAsk=0};
 
