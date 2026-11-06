@@ -295,6 +295,25 @@ fq("#fxh").checked=true;fq("#fxs").click();check("Leave this verb out removes it
 eq("The original answer key is never changed",JSON.stringify(w.SH_D0()),d0);w.ovx();
 w.SH_fxReset("pret");check("Reset brings back every original verb",w.SH_D().length===nv&&JSON.stringify(w.SH_D())===d0);check("No fixes are left after reset",!w.SH_fxHas("pret")&&!/"v"|"p"/.test(w.localStorage.getItem("pfix")||""));
 }catch(e){check("Fixing built-in questions works",false,e.message)}
+suite("Teachers can fix verb-set questions");
+try{var vq=function(id){return w.document.getElementById(id)},vov=function(){var o=vq("ov");return o&&!o.hidden};
+var vset={name:"Test verbs",type:"verbs",tense:"Imperfect",unit:"",items:[["jugar","to play",w.SH_conj("jugar","Imperfect"),"en el parque"],["comer","to eat",w.SH_conj("comer","Imperfect"),"galletas"]]};
+w.CS.push(vset);var vi=w.CS.length-1;
+var vcard=w.document.createElement("div");vcard.innerHTML='<button class="dots" data-x="c'+vi+'"></button>';w.document.body.appendChild(vcard);
+w.pop(vcard,[["✏️ Edit",function(){}],["🗑️ Delete",function(){}]]);var vpop=w.document.querySelector(".pop");
+check("Verb sets have “Fix forms & sentences” in the ⋮ menu",!!vpop&&/Fix forms/.test(vpop.textContent),vpop?vpop.textContent:"no menu");
+try{w.closePop&&w.closePop()}catch(e){}var tcard=w.document.createElement("div");tcard.innerHTML='<button class="dots" data-x="u:Unit"></button>';w.pop(tcard,[["✏️ Edit",function(){}]]);check("Other menus don't get it",!/Fix forms/.test((w.document.querySelector(".pop")||{}).textContent||""));try{w.closePop&&w.closePop()}catch(e){}vcard.remove();tcard.remove();
+w.SH_vfix(vi);check("The fix screen opens with every verb",vov()&&!!vq("vf0_0")&&!!vq("vf1_5"));
+eq("It shows the current form",vq("vf0_0").value,"jugaba");eq("It shows the sentence ending",vq("vfp0").value,"en el parque");
+vq("vf1_2").value="";vq("vfok").click();check("A blank form isn't allowed",vov()&&/comer/.test(vq("vfe").textContent));
+vq("vf1_2").value="comía";vq("vf0_0").value="jugaba yo";vq("vfp0").value="  en  la casa ";vq("vfm0").value="to play (games)";
+vq("vff").value="com";vq("vff").oninput();check("Find a verb narrows the list",w.document.querySelector('#ov [data-vv="jugar"]').hidden&&!w.document.querySelector('#ov [data-vv="comer"]').hidden);
+vq("vfok").click();check("Saving closes the fix screen",!vov());
+eq("The fixed form is saved",w.CS[vi].items[0][2][0],"jugaba yo");eq("The sentence ending is cleaned up and saved",w.CS[vi].items[0][3],"en la casa");eq("The meaning is saved",w.CS[vi].items[0][1],"to play (games)");
+check("The fix goes into the library that syncs to students",/jugaba yo/.test(w.localStorage.getItem("pset")||""));
+w.cs=w.CS[vi];var vqs=w.SH_mkQs("type",12),vy=vqs.filter(function(g){return/^yo · jugar/.test(g.wk.q)});
+check("Questions now use the fixed form and ending",vy.length>0?vy.every(function(g){return g.ok[0]==="jugaba yo"&&/en la casa/.test(g.ans)}):vqs.some(function(g){return/en la casa/.test(g.ans)}),JSON.stringify(vqs.map(function(g){return g.ans})));
+w.CS.splice(vi,1);w.saveS();w.cs=null}catch(e){check("Fixing verb-set questions works",false,e.message)}
 suite("Screens open without errors");
 var n0=w.__errs.length;try{w.view("hub");check("Library shows units",w.document.querySelectorAll("#sets [data-u]").length>0,"no unit cards");
 var c=w.document.querySelector("#sets [data-u]");c.click();check("A unit opens",!w.document.getElementById("unit").hidden);
