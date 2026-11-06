@@ -62,6 +62,7 @@ git push origin main            # goes live via GitHub Pages
 - **No name labels:** teachers see only animal usernames. The old private name labels were removed completely. Teachers match usernames to real names outside Loro (school gradebook or a paper roster). `dn(n)` just returns the username.
 - **Teacher passwords:** teachers log in with a password (8 to 72 characters, letters and numbers), checked by `goodPw()` on the site and `_goodpw()` in `database/teacher-passwords.sql`. A teacher who logs in with an old 4-digit PIN is asked to pick a password (`tNewPw`). Students keep 4-digit PINs.
 - **Picture links:** every `<img src>` goes through `isrc()`, which only allows `data:image/…;base64` or `https://` links and escapes them. Never put a picture link into HTML without it.
+- **Terms editor:** `editor()` shows rows (term | definition). Enter jumps to the next box and adds a row at the end. Pasting several lines into any box fills rows. "Paste a list" switches to the old textarea (`#sd`). `parse2()` reads tabs, `|`, ` - `, `=`, `;`, `: `, or term and definition on alternating lines.
 - **Assignments:** each assignment has a goal type: minutes practiced, terms completed at a minimum %, or a timed goal (N words in M minutes at X%). Students turn work in, and teachers see it in the gradebook.
 - **Weak spots:** terms a student keeps missing. They're saved per student, and teachers can view them per student and per class.
 - **Libraries:** each teacher has their own library of units and sets, and can share sets with another teacher by share code.
