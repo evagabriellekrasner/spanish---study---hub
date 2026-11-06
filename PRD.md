@@ -76,6 +76,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
 ### 5.5 Teacher library (should have)
 - Each teacher has a separate library of units and sets.
 - Teachers can share sets with other teachers by share code.
+- Teachers can fix the built-in sets (Nouns, verbs & adjectives and Pretérito irregular): change an answer, skip a picture, or leave a verb out. Fixes apply only to that teacher's classes, and Reset to original undoes them.
 - A content checker catches mistakes in new sets before students see them.
 
 ### 5.6 Look and feel (should have)
@@ -88,7 +89,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
 - **Privacy:** no student personal info in the database, the code, or the screens. No secrets in the public repo.
 - **Speed:** the site is one static page served from a CDN, with no build step.
 - **Reliability:** if a database update hasn't been run yet, the site shows a friendly message instead of breaking.
-- **Access:** the site must load on the school network. GitHub Pages was chosen after the old host was blocked.
+- **Access:** the site must load on the school network. GitHub Pages was chosen because, unlike the old Netlify host, it has no usage credits to run out.
 
 ## 7. Success metrics
 | Metric | Proposed target |
@@ -100,7 +101,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
 | Student personal info stored | 0 records |
 
 ## 8. Launch checklist and open items
-- [x] Move hosting to GitHub Pages (the school blocked the old host)
+- [x] Move hosting to GitHub Pages (Netlify's free plan has usage credit limits)
 - [x] Animal usernames, with the class code required for students
 - [x] Clear old student accounts that had real names
 - [x] Teachers can delete assignments
@@ -108,7 +109,7 @@ Loro is a free web app where high school Spanish students practice vocabulary an
 - [ ] Confirm the new link loads on the school network
 - [ ] Change the teacher code before real students join
 - [x] Run `database/close-name-signup.sql` (done; the old Netlify copy is deleted)
-- [ ] Update the one-pager in `docs/` with the Loro name and new link
+- [x] Update the one-pager in `docs/` with the Loro name and new link
 
 ## 9. Ideas for later
 - **"Forgot username" help:** a student enters the class code, then their animal, to find their username. The teacher resets the PIN.

@@ -65,6 +65,7 @@ git push origin main            # goes live via GitHub Pages
 - **Assignments:** each assignment has a goal type: minutes practiced, terms completed at a minimum %, or a timed goal (N words in M minutes at X%). Students turn work in, and teachers see it in the gradebook.
 - **Weak spots:** terms a student keeps missing. They're saved per student, and teachers can view them per student and per class.
 - **Libraries:** each teacher has their own library of units and sets, and can share sets with another teacher by share code.
+- **Fixing built-in sets:** with editing unlocked, a built-in set's ⋮ menu has "Fix answers" (`fxPics` for pictures, `fxVerb` for Pretérito irregular) and "Reset to original". Fixes live in `FX`, saved as the library key `pfix` (listed in `SK`, so students get them when their library syncs). `fixP()` and `fixV()` rebuild `PIC` and `D` from the untouched originals `PA`/`PW0` and `D0`. Fixes are keyed by the original word or verb, so the built-in data itself never changes. Verb conjugations in the 8-tense trainer can't be fixed this way yet.
 - **Loro the parrot:** the parrot logo talks to students. On the home screen it counts open assignments (`loroAsg`). During any practice it slides in from the top right (big, for about 5 seconds) after every 5 in a row, and now and then with a random cheer or a "try again" (`loroAns`, hooked into `WK` and verb practice). Lines live in `LORO` and mix English and Spanish.
 - **Themes:** students can pick a color theme. Default is Ocean Slate blue (`#3f78b5` → `#2f5d8f`).
 
